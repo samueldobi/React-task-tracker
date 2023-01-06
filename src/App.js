@@ -53,9 +53,22 @@ const deleteTask =  async (id) =>{
   setTasks(tasks.filter((task)=> task.id !==id))
 }
 //Toggle Reminder
-const toggleReminder = (id) =>{
+const toggleReminder = async (id) =>{
+  const taskToToggle = await fetchTask(id)
+  const updTask = {...taskToToggle,
+  reminder:!taskToToggle.reminder }
+  const res = await fetch(`http://localhost:5000/task/${id}`,{
+    method:'PUT',
+    headers :{
+      'Content-type':'application/json'
+    },
+    body:JSON.stringify(updTask)
+  })
+
+  const data = await res.json()
+
   setTasks(tasks.map((task)=> task.id === id 
-  ? {...task , reminder: !task.reminder} : task))
+  ? {...task , reminder: data.reminder} : task))
 }
 
   return (
